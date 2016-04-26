@@ -29,9 +29,6 @@ function performanceBudget (pbInfo) {
     };
   };
 
-
-
-
   function getFolders (dir) {
     return fs.readdirSync(dir).filter(function (file) {
       return fs.statSync(path.join(dir, file)).isDirectory();
