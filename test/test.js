@@ -14,8 +14,8 @@ var testObj = { styles: filePath };
 
 describe('when running gulp-performance-budget', function () {
   it('should emit error on streamed file', function (done) {
-    gulp.src(testSrc, { buffer: false });
-      .pipe(performanceBudget());
+    gulp.src(testSrc, { buffer: false })
+      .pipe(performanceBudget())
       .on('error', function (err) {
         err.message.should.eql('Streaming not supported');
         done();
@@ -23,9 +23,9 @@ describe('when running gulp-performance-budget', function () {
   });
 
 	it('should write a json config to file', function (done) {
-		gulp.src(testSrc);
-			.pipe(performanceBudget(testObj));
-			.pipe(gulp.dest(jsonFile));
+		gulp.src(testSrc)
+			.pipe(performanceBudget(testObj))
+			.pipe(gulp.dest(jsonFile))
 			.on('end', function (err, data) {
         fs.readFile(jsonFile, 'utf8', function (err, data) {
           if (err) throw (err);
@@ -36,9 +36,9 @@ describe('when running gulp-performance-budget', function () {
 	});
 
   it('should create an object called styles', function (done) {
-    gulp.src(testSrc);
-      .pipe(performanceBudget(testObj));
-      .pipe(gulp.dest(jsonFile));
+    gulp.src(testSrc)
+      .pipe(performanceBudget(testObj))
+      .pipe(gulp.dest(jsonFile))
       .on('end', function (err, data) {
         fs.readFile(jsonFile, 'utf8', function (err, data) {
           if (err) throw (err);
@@ -50,9 +50,9 @@ describe('when running gulp-performance-budget', function () {
   });
 
   it('should add the filename test.css to styles name array', function (done) {
-    gulp.src(testSrc);
-      .pipe(performanceBudget(testObj));
-      .pipe(gulp.dest(jsonFile));
+    gulp.src(testSrc)
+      .pipe(performanceBudget(testObj))
+      .pipe(gulp.dest(jsonFile))
       .on('end', function (err, data) {
         fs.readFile(jsonFile, 'utf8', function (err, data) {
           if (err) throw (err);
