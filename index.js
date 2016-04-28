@@ -45,7 +45,9 @@ function performanceBudget (perfBudgetJson) {
   function updatePropValue(key, val){
     var oldVal = perfObj[key];
     var newVal = oldVal += val;
-    perfObj[key] = newVal;
+    if(perfObj.hasOwnProperty(key)){
+      perfObj[key] = newVal;
+    }
   }
 
   function generate (file, enc, cb) {
