@@ -9,7 +9,10 @@ var through = require('through2');
 var testSrc = '_src/**/*';
 var testCSSSrc = '_src/test.css';
 var testJSSrc = '_src/test.js';
-var jsonFile = './testing.json';
+var jsonFileCSS = './cssFiles.json';
+var jsonFileJS = './JSFiles.json';
+var jsonFileAll = './allFiles.json';
+
 
 var filePath = '/_src/';
 
@@ -25,11 +28,11 @@ describe('when running gulp-performance-budget', function () {
 
 	it('should write a json config to file', function (done) {
 		gulp.src(testSrc)
-			.pipe(performanceBudget(jsonFile))
-			.pipe(gulp.dest(jsonFile))
+			.pipe(performanceBudget(jsonFileAll))
+			.pipe(gulp.dest('dest'))
 			.on('end', function (err, data) {
        var _self = this;
-        fs.readFile(jsonFile, 'utf8', function (err, data) {
+        fs.readFile(jsonFileAll, 'utf8', function (err, data) {
           if (err) throw (err);
           data.length.should.be.above(0);
           done();
@@ -39,10 +42,10 @@ describe('when running gulp-performance-budget', function () {
 
   it('should create an object containing a property css', function (done) {
     gulp.src(testCSSSrc)
-      .pipe(performanceBudget())
-      .pipe(gulp.dest(jsonFile))
+      .pipe(performanceBudget(jsonFileCSS))
+      .pipe(gulp.dest('dest'))
       .on('end', function (err, data) {
-        fs.readFile(jsonFile, 'utf8', function (err, data) {
+        fs.readFile(jsonFileCSS, 'utf8', function (err, data) {
           if (err) throw (err);
           var dataObj = JSON.parse(data);
           dataObj.should.have.property('css');
@@ -53,11 +56,11 @@ describe('when running gulp-performance-budget', function () {
 
   it('should return a css value greater than zero', function(done){
     var ext = 'css';
-     gulp.src(testJSSrc)
-      .pipe(performanceBudget())
-      .pipe(gulp.dest(jsonFile))
+     gulp.src(testCSSSrc)
+      .pipe(performanceBudget(jsonFileCSS))
+      .pipe(gulp.dest('dest'))
       .on('end', function (err, data) {
-        fs.readFile(jsonFile, 'utf8', function (err, data) {
+        fs.readFile(jsonFileCSS, 'utf8', function (err, data) {
           if (err) throw (err);
           var dataObj = JSON.parse(data);
           var cssVal = 0;
