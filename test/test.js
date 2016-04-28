@@ -5,14 +5,13 @@ var should = require('should');
 var fs = require('fs');
 var performanceBudget = require('../index');  
 var through = require('through2');
-var getFileSize = require('filesize')
 
-var testSrc = '_src/test.css';
+var testSrc = '_src/**/*';
+var testCSSSrc = '_src/test.css';
+var testJSSrc = '_src/test.js';
 var jsonFile = './test.json';
 
 var filePath = '/_src/';
-// var testObj = { styles: filePath, scripts: filePath, images: filePath };
-var testObj = { styles: filePath };
 
 describe('when running gulp-performance-budget', function () {
   it('should emit error on streamed file', function (done) {
@@ -26,63 +25,50 @@ describe('when running gulp-performance-budget', function () {
 
 	it('should write a json config to file', function (done) {
 		gulp.src(testSrc)
-			.pipe(performanceBudget(testObj))
+			.pipe(performanceBudget())
 			.pipe(gulp.dest(jsonFile))
 			.on('end', function (err, data) {
+       var _self = this;
         fs.readFile(jsonFile, 'utf8', function (err, data) {
           if (err) throw (err);
+          console.log(JSON.parse(data));
           data.length.should.be.above(0);
           done();
         });
 		});
 	});
 
-  it('should create an object called styles', function (done) {
-    gulp.src(testSrc)
-      .pipe(performanceBudget(testObj))
+  it('should create an object containing a property css', function (done) {
+    gulp.src(testCSSSrc)
+      .pipe(performanceBudget())
       .pipe(gulp.dest(jsonFile))
       .on('end', function (err, data) {
         fs.readFile(jsonFile, 'utf8', function (err, data) {
           if (err) throw (err);
           var dataObj = JSON.parse(data);
-          dataObj.should.have.property('styles');
+          dataObj.should.have.property('css');
           done();
         });
       });
   });
 
-  it('should add the filename test.css to styles name array', function (done) {
-    gulp.src(testSrc)
-      .pipe(performanceBudget(testObj))
+  it('should return a css value greater than zero', function(done){
+    var ext = 'css';
+     gulp.src(testJSSrc)
+      .pipe(performanceBudget())
       .pipe(gulp.dest(jsonFile))
       .on('end', function (err, data) {
         fs.readFile(jsonFile, 'utf8', function (err, data) {
           if (err) throw (err);
           var dataObj = JSON.parse(data);
-          var stylesName = dataObj.styles.name;
-          // stylesName.should.have.property('test.css');
+          var cssVal = 0;
+          if(dataObj.hasOwnProperty(ext)){
+            cssVal = parseInt(dataObj[ext]);
+          }
+          cssVal.should.be.greaterThan(0);
           done();
         });
       });
-  });
-
-  it('should return the file size as a string', function(done){
-    
-    var filesize = 0;
-    gulp.src('_src/**/*')
-    .pipe(through.obj(function (file, enc, cb) {
-      var itemFilesize = file.stat ? getFileSize(file.stat.size) : getFileSize(Buffer.byteLength(String(file.contents)));
-      filesize += parseInt(itemFilesize);   
-      cb(null, filesize);
-    }))
-    .on('data', function (data) {
-      //needs to be here
-    })
-    .on('end', function(){
-      filesize.should.be.type('number');
-      done();
-    })
-
   });
 
 });

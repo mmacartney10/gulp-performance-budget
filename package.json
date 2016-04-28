@@ -12,9 +12,12 @@
   "author": "Matt Macartney",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.3.5",
     "filesize": "^3.3.0",
+    "fs-extra": "^0.29.0",
     "gulp": "^3.9.1",
     "gulp-util": "^3.0.7",
+    "path-exists": "^2.1.0",
     "through2": "^2.0.1"
   },
   "devDependencies": {
