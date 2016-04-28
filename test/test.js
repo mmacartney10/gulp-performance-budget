@@ -3,7 +3,9 @@ var gulp = require('gulp');
 var assert = require('stream-assert');
 var should = require('should');
 var fs = require('fs');
-var performanceBudget = require('../index');
+var performanceBudget = require('../index');  
+var through = require('through2');
+var getFileSize = require('filesize')
 
 var testSrc = '_src/test.css';
 var jsonFile = './test.json';
@@ -63,4 +65,25 @@ describe('when running gulp-performance-budget', function () {
         });
       });
   });
+
+  it('should return the file size as a string', function(done){
+    
+    var filesize = 0;
+    gulp.src('_src/**/*')
+    .pipe(through.obj(function (file, enc, cb) {
+      var itemFilesize = file.stat ? getFileSize(file.stat.size) : getFileSize(Buffer.byteLength(String(file.contents)));
+      filesize += parseInt(itemFilesize);
+      this.push(filesize);      
+      cb();
+    }))
+    .on('data', function (data) {
+      //needs to be here
+    })
+    .on('end', function(){
+      filesize.should.be.type('number');
+      done();
+    })
+
+  });
+
 });

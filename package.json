@@ -12,6 +12,7 @@
   "author": "Matt Macartney",
   "license": "ISC",
   "dependencies": {
+    "filesize": "^3.3.0",
     "gulp": "^3.9.1",
     "gulp-util": "^3.0.7",
     "through2": "^2.0.1"
