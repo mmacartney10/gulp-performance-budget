@@ -72,9 +72,8 @@ describe('when running gulp-performance-budget', function () {
     gulp.src('_src/**/*')
     .pipe(through.obj(function (file, enc, cb) {
       var itemFilesize = file.stat ? getFileSize(file.stat.size) : getFileSize(Buffer.byteLength(String(file.contents)));
-      filesize += parseInt(itemFilesize);
-      this.push(filesize);      
-      cb();
+      filesize += parseInt(itemFilesize);   
+      cb(null, filesize);
     }))
     .on('data', function (data) {
       //needs to be here
