@@ -17,12 +17,13 @@ const PLUGIN_NAME = 'performance-budget';
 const jsonFile = './test.json';
 const rootPath = __dirname;
 
-function performanceBudget (pbInfo) {
+function performanceBudget (perfBudgetJson) {
 
   perfObj = {};
+  perfBudgetJson = perfBudgetJson || jsonFile;
 
   function writeToFile () {
-    fs.writeJson(jsonFile, perfObj, function (err, data) {
+    fs.writeJson(perfBudgetJson, perfObj, function (err, data) {
       if (err) throw (err);
     });
   };

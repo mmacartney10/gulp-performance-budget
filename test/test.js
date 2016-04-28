@@ -9,7 +9,7 @@ var through = require('through2');
 var testSrc = '_src/**/*';
 var testCSSSrc = '_src/test.css';
 var testJSSrc = '_src/test.js';
-var jsonFile = './test.json';
+var jsonFile = './testing.json';
 
 var filePath = '/_src/';
 
@@ -25,13 +25,12 @@ describe('when running gulp-performance-budget', function () {
 
 	it('should write a json config to file', function (done) {
 		gulp.src(testSrc)
-			.pipe(performanceBudget())
+			.pipe(performanceBudget(jsonFile))
 			.pipe(gulp.dest(jsonFile))
 			.on('end', function (err, data) {
        var _self = this;
         fs.readFile(jsonFile, 'utf8', function (err, data) {
           if (err) throw (err);
-          console.log(JSON.parse(data));
           data.length.should.be.above(0);
           done();
         });
