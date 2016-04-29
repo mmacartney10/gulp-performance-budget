@@ -2,19 +2,32 @@
 var gulp = require('gulp');
 var assert = require('stream-assert');
 var should = require('should');
-var fs = require('fs');
+var Promise = require('bluebird');
+var fs = Promise.promisifyAll(require('fs-extra'));
 var performanceBudget = require('../index');  
 var through = require('through2');
+var getFileSize = require('filesize');
 
 var testSrc = '_src/**/*';
 var testCSSSrc = '_src/test.css';
 var testJSSrc = '_src/test.js';
+var testImageSrc = '_src/test/images/**/*';
 var jsonFileCSS = './cssFiles.json';
 var jsonFileJS = './JSFiles.json';
+var jsonFileImage = './imageFiles.json';
 var jsonFileAll = './allFiles.json';
 
 
 var filePath = '/_src/';
+
+function getCurrentFileSize(file){
+  return file.stat ? getFileSize(file.stat.size) : getFileSize(Buffer.byteLength(String(file.contents)));
+}
+
+function getFile(filename) {
+  return fs.readFileAsync(filename);
+};
+
 
 describe('when running gulp-performance-budget', function () {
   it('should emit error on streamed file', function (done) {
@@ -54,6 +67,20 @@ describe('when running gulp-performance-budget', function () {
       });
   });
 
+  it('should create an object containing a property image', function (done) {
+    gulp.src(testImageSrc)
+      .pipe(performanceBudget(jsonFileImage))
+      .pipe(gulp.dest('dest'))
+      .on('end', function (err, data) {
+        fs.readFile(jsonFileImage, 'utf8', function (err, data) {
+          if (err) throw (err);
+          var dataObj = JSON.parse(data);
+          dataObj.should.have.property('image');
+          done();
+        });
+      });
+  });
+
   it('should return a css value greater than zero', function(done){
     var ext = 'css';
      gulp.src(testCSSSrc)
@@ -72,5 +99,42 @@ describe('when running gulp-performance-budget', function () {
         });
       });
   });
+
+  // it('should calculate the sum of 2 file sizes', function (done) {
+  //   var file1 = './_src/test/images/images.jpg';
+  //   var file2 = './_src/test/images/imgres.png';
+  //   var fileSize1, fileSize2;
+  //   var imagesx2 = './imagesx2.json';
+
+  //   getFile(file1)
+  //   .then(function(data){
+  //     fileSize1 = parseInt(getCurrentFileSize(data));
+  //     console.log('filesize1', fileSize1);
+  //     return getFile(file2);
+  //   })
+  //   .then(function(data){
+  //     fileSize2 = parseInt(getCurrentFileSize(data));
+  //     console.log('filesize2', fileSize2);
+  //     var expectedResult = fileSize1 + fileSize2;
+  //     return expectedResult;
+  //   })
+  //   .then(function(expectedResult){
+  //     console.log('1: ' + fileSize1 + ' 2: ' + fileSize2);
+  //     var expectedResult = expectedResult;
+  //     console.log('expected', expectedResult);
+  //     gulp.src([file1, file2])
+  //     .pipe(performanceBudget(imagesx2))
+  //     .pipe(gulp.dest('dest'))
+  //     .on('end', function (err, data) {
+  //       fs.readFile(imagesx2, 'utf8', function (err, data) {
+  //         if (err) throw (err);
+  //         var dataObj = JSON.parse(data);
+  //         dataObj.should.have.property('image', expectedResult);
+  //         done();
+  //       });
+  //     });
+
+  //   });
+  // });
 
 });

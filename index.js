@@ -37,17 +37,31 @@ function performanceBudget (perfBudgetJson) {
   }
 
   function buildPerfObjects(extname, file){
+    extname = setExtensionRef(extname);
+    var fileSize = parseInt(getCurrentFileSize(file));
     if(!perfObj.hasOwnProperty(extname)){
-      perfObj[extname] = parseInt(getCurrentFileSize(file));
+      perfObj[extname] = fileSize;
+    }else{
+      updatePropValue(extname, fileSize);
     }
   }
 
-  function updatePropValue(key, val){
-    var oldVal = perfObj[key];
-    var newVal = oldVal += val;
-    if(perfObj.hasOwnProperty(key)){
-      perfObj[key] = newVal;
+  function updatePropValue(extname, fileSize){
+    var oldVal = perfObj[extname];
+    var newVal = oldVal + fileSize;
+    //console.log(extname +': ' + oldVal + ' + ' + fileSize + ' = ' + newVal);
+    if(perfObj.hasOwnProperty(extname)){
+      perfObj[extname] = newVal;
     }
+  }
+
+  function setExtensionRef(extname){
+    var extRef = extname;
+    var isImage = (/(gif|jpg|jpeg|tiff|png|svg)$/i).test(extRef);
+    if(isImage){
+      extRef = 'image';
+    }
+    return extRef;
   }
 
   function generate (file, enc, cb) {
@@ -65,7 +79,7 @@ function performanceBudget (perfBudgetJson) {
     // TODO these need promises to avoid race conditions;
     buildPerfObjects(getFileExtension(file), file);
 
-    updatePropValue();
+    //updatePropValue();
 
     writeToFile();
 
