@@ -1,2 +1,7 @@
 # Dependencies
 node_modules
+test/*.json
+cssFiles.json
+JSFiles.json
+imageFiles.json
+allFiles.json

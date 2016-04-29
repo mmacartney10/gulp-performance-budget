@@ -6,10 +6,13 @@ var fs = Promise.promisifyAll(require('fs-extra'));
 var path = require('path');
 var pathExists = require('path-exists');
 var getFileSize = require('filesize');
+var xml2js = require('xml2js');
+var parser = new xml2js.Parser();
 
 var name;
 var obj = {};
 var perfObj = {};
+var currentFile;
 
 
 // Consts
@@ -55,17 +58,45 @@ function performanceBudget (perfBudgetJson) {
     }
   }
 
+  function whichSvg(extname, type){
+    //read svg file and see if property contains font reference
+    
+    //font-face
+    var fileContents = currentFile.contents.toString();
+    var typeMatch = 'images';
+
+    if(fileContents.indexOf('font-face') > 0){
+      typeMatch = 'fonts';
+    };
+
+    return type === typeMatch;
+  }
+
   function setExtensionRef(extname){
     var extRef = extname;
-    var isImage = (/(gif|jpg|jpeg|tiff|png|svg)$/i).test(extRef);
-    if(isImage){
-      extRef = 'image';
+
+    // images
+    if((/(gif|jpg|jpeg|tiff|png)$/i).test(extRef)){
+       extRef = 'image';
     }
+    if(extRef === 'svg' && whichSvg(extRef, 'images')){
+      extRef = 'image';  
+    }
+      
+    //fonts
+    if((/(woff|woff2|eot|ttf)$/i).test(extRef)){
+      extRef = 'fonts'; 
+    }
+
+    if(extRef === 'svg' && whichSvg(extRef, 'fonts')){
+      extRef = 'fonts';
+    }
+
     return extRef;
   }
 
   function generate (file, enc, cb) {
-
+    
     if (file.isNull()) {
       cb();
       return;
@@ -75,11 +106,11 @@ function performanceBudget (perfBudgetJson) {
       cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
       return;
     };
+
+    currentFile = file;
     
     // TODO these need promises to avoid race conditions;
     buildPerfObjects(getFileExtension(file), file);
-
-    //updatePropValue();
 
     writeToFile();
 

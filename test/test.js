@@ -9,13 +9,13 @@ var through = require('through2');
 var getFileSize = require('filesize');
 
 var testSrc = '_src/**/*';
-var testCSSSrc = '_src/test.css';
-var testJSSrc = '_src/test.js';
-var testImageSrc = '_src/test/images/**/*';
-var jsonFileCSS = './cssFiles.json';
-var jsonFileJS = './JSFiles.json';
-var jsonFileImage = './imageFiles.json';
-var jsonFileAll = './allFiles.json';
+var testCSSSrc = '_src/styles/**/*.css';
+var testJSSrc = '_src/scripts/**/*.js';
+var testImageSrc = '_src/images/**/*';
+var jsonFileCSS = './test/cssFiles.json';
+var jsonFileJS = './test/JSFiles.json';
+var jsonFileImage = './test/imageFiles.json';
+var jsonFileAll = './test/allFiles.json';
 
 
 var filePath = '/_src/';
@@ -101,8 +101,8 @@ describe('when running gulp-performance-budget', function () {
   });
 
   // it('should calculate the sum of 2 file sizes', function (done) {
-  //   var file1 = './_src/test/images/images.jpg';
-  //   var file2 = './_src/test/images/imgres.png';
+  //   var file1 = './_src/images/images.jpg';
+  //   var file2 = './_src/images/imgres.png';
   //   var fileSize1, fileSize2;
   //   var imagesx2 = './imagesx2.json';
 
