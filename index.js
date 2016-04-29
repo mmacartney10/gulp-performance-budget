@@ -6,8 +6,6 @@ var fs = Promise.promisifyAll(require('fs-extra'));
 var path = require('path');
 var pathExists = require('path-exists');
 var getFileSize = require('filesize');
-var xml2js = require('xml2js');
-var parser = new xml2js.Parser();
 
 var name;
 var obj = {};
